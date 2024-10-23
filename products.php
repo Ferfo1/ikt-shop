@@ -1,20 +1,28 @@
 <?php
 require 'db.php';
 
-// Termék adatainak lekérése az URL-ből kapott ID alapján
-if (isset($_GET['id'])) {
-    $productId = $_GET['id'];
+// Termékek lekérdezése
+$stmt = $pdo->prepare("SELECT * FROM products");
+$stmt->execute();
+$products = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+// Kosár inicializálása
+session_start();
+if (!isset($_SESSION['cart'])) {
+    $_SESSION['cart'] = [];
+}
+
+// Kosár hozzáadása
+if (isset($_POST['add_to_cart'])) {
+    $productId = $_POST['product_id'];
     $stmt = $pdo->prepare("SELECT * FROM products WHERE id = ?");
     $stmt->execute([$productId]);
     $product = $stmt->fetch(PDO::FETCH_ASSOC);
-
-    if (!$product) {
-        echo "A termék nem található.";
+    if ($product) {
+        $_SESSION['cart'][] = $product;
+        header("Location: products.php");
         exit;
     }
-} else {
-    header("Location: products.php");
-    exit;
 }
 ?>
 
@@ -23,44 +31,31 @@ if (isset($_GET['id'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= htmlspecialchars($product['name']) ?> - Részletes termék</title>
+    <title>Összes Termék - Mini Webshop</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
     <style>
-        .container {
-            margin-top: 50px;
+        .card {
+            transition: transform 0.3s, box-shadow 0.3s;
         }
 
-        .product-image {
-            width: 100%;
-            max-height: 500px;
+        .card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .card-img-top {
+            height: 200px;
             object-fit: cover;
-            cursor: zoom-in;
-            transition: transform 0.2s ease;
         }
 
-        .product-image:hover {
-            transform: scale(1.1);
-        }
-
-        .product-details {
-            padding: 20px;
-        }
-
-        .product-name {
-            font-size: 28px;
+        .card-title {
+            font-size: 20px;
             font-weight: bold;
-            margin-bottom: 20px;
-        }
-
-        .product-description {
-            font-size: 16px;
-            margin-bottom: 20px;
-        }
-
-        .product-price {
-            font-size: 24px;
             color: #007bff;
-            margin-bottom: 20px;
+        }
+
+        .card-body a {
+            text-decoration: none;
         }
 
         .btn-primary {
@@ -74,22 +69,32 @@ if (isset($_GET['id'])) {
     </style>
 </head>
 <body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="index.php">Mini Webshop</a>
+        </div>
+    </nav>
+
     <div class="container">
+        <h2 class="my-4">Termékek Listája</h2>
         <div class="row">
-            <div class="col-md-6">
-                <img src="<?= htmlspecialchars($product['image']) ?>" alt="<?= htmlspecialchars($product['name']) ?>" class="product-image">
-            </div>
-            <div class="col-md-6">
-                <div class="product-details">
-                    <h1 class="product-name"><?= htmlspecialchars($product['name']) ?></h1>
-                    <p class="product-description"><?= htmlspecialchars($product['description']) ?></p>
-                    <p class="product-price">Ár: <?= htmlspecialchars($product['price']) ?> Ft</p>
-                    <form method="POST" action="products.php">
-                        <input type="hidden" name="product_id" value="<?= $product['id'] ?>">
-                        <button type="submit" name="add_to_cart" class="btn btn-primary">Kosárba</button>
-                    </form>
+            <?php foreach ($products as $product): ?>
+                <div class="col-md-4">
+                    <div class="card mb-4">
+                        <a href="product_detail.php?id=<?= $product['id'] ?>">
+                            <img src="<?= htmlspecialchars($product['image']) ?>" class="card-img-top" alt="<?= htmlspecialchars($product['name']) ?>">
+                        </a>
+                        <div class="card-body">
+                            <h5 class="card-title"><?= htmlspecialchars($product['name']) ?></h5>
+                            <p class="card-text">Ár: <?= htmlspecialchars($product['price']) ?> Ft</p>
+                            <form method="POST" action="products.php">
+                                <input type="hidden" name="product_id" value="<?= $product['id'] ?>">
+                                <button type="submit" name="add_to_cart" class="btn btn-primary">Kosárba</button>
+                            </form>
+                        </div>
+                    </div>
                 </div>
-            </div>
+            <?php endforeach; ?>
         </div>
     </div>
 
