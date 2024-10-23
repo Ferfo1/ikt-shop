@@ -17,22 +17,6 @@ $stmt = $pdo->prepare("SELECT o.id, o.total, o.address, o.payment_method, o.deli
 $stmt->execute([$userId]);
 $orders = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_address'])) {
-    $street = $_POST['street'];
-    $houseNumber = $_POST['house_number'];
-    $city = $_POST['city'];
-    $state = $_POST['state'];
-    $zipcode = $_POST['zipcode'];
-
-    // Cím mentése az adatbázisba
-    $stmt = $pdo->prepare("INSERT INTO addresses (user_id, street, house_number, city, state, zipcode) 
-                           VALUES (?, ?, ?, ?, ?, ?)");
-    $stmt->execute([$userId, $street, $houseNumber, $city, $state, $zipcode]);
-
-    header("Location: profile.php");
-    exit;
-}
-
 // Felhasználói adatok lekérdezése
 $stmtUser = $pdo->prepare("SELECT username, email FROM users WHERE id = ?");
 $stmtUser->execute([$userId]);
@@ -82,45 +66,6 @@ $address = $stmtAddress->fetch(PDO::FETCH_ASSOC);
             text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
         }
 
-        label {
-            display: block;
-            text-align: left;
-            font-weight: bold;
-            margin-top: 10px;
-        }
-
-        input {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 20px;
-            border: 1px solid #ced4da;
-            border-radius: 5px;
-            font-size: 14px;
-            transition: border-color 0.3s;
-        }
-
-        input:focus {
-            border-color: #007bff;
-            outline: none;
-            box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
-        }
-
-        button {
-            width: 100%;
-            padding: 12px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-            transition: background-color 0.3s;
-        }
-
-        button:hover {
-            background-color: #0056b3;
-        }
-
         table {
             width: 100%;
             margin-top: 20px;
@@ -154,26 +99,6 @@ $address = $stmtAddress->fetch(PDO::FETCH_ASSOC);
         <h2>Felhasználói adatok</h2>
         <p><strong>Felhasználónév:</strong> <?= htmlspecialchars($user['username']) ?></p>
         <p><strong>Email:</strong> <?= htmlspecialchars($user['email']) ?></p>
-
-        <h2>Új cím mentése</h2>
-        <form method="POST" action="profile.php">
-            <label for="street">Utca</label>
-            <input type="text" id="street" name="street" required>
-
-            <label for="house_number">Házszám</label>
-            <input type="text" id="house_number" name="house_number" required>
-
-            <label for="city">Város</label>
-            <input type="text" id="city" name="city" required>
-
-            <label for="state">Megye</label>
-            <input type="text" id="state" name="state" required>
-
-            <label for="zipcode">Irányítószám</label>
-            <input type="text" id="zipcode" name="zipcode" required>
-
-            <button type="submit" name="save_address">Cím mentése</button>
-        </form>
 
         <h2>Rendeléseim</h2>
         <table>
