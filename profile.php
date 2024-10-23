@@ -7,7 +7,7 @@ if (!isset($_SESSION['user_id'])) {
     header('Location: login.php'); // Ha nem, irányítsuk át a bejelentkezési oldalra
     exit;
 }
- 
+
 $userId = $_SESSION['user_id'];
 
 // Rendelések lekérdezése (az `orders` tábla `address` mezőjének felhasználásával)
@@ -51,6 +51,77 @@ $address = $stmtAddress->fetch(PDO::FETCH_ASSOC);
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Profil - Mini Webshop</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #74ebd5, #9face6);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            color: #343a40;
+        }
+
+        .container {
+            background-color: #fff;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 900px;
+            text-align: center;
+            transition: transform 0.3s;
+        }
+
+        .container:hover {
+            transform: scale(1.02);
+        }
+
+        h1, h2 {
+            color: #007bff;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+        }
+
+        table {
+            margin-top: 20px;
+        }
+
+        table th, table td {
+            padding: 10px;
+            text-align: left;
+        }
+
+        .form-label {
+            font-weight: bold;
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+            border-color: #007bff;
+        }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+            border-color: #0056b3;
+        }
+
+        .btn-secondary {
+            margin-top: 20px;
+        }
+
+        input.form-control {
+            margin-bottom: 15px;
+        }
+
+        .btn {
+            transition: background-color 0.3s, transform 0.2s;
+        }
+
+        .btn:hover {
+            transform: scale(1.05);
+        }
+    </style>
 </head>
 <body>
     <div class="container">
