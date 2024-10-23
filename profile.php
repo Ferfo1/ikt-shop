@@ -50,7 +50,6 @@ $address = $stmtAddress->fetch(PDO::FETCH_ASSOC);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Profil - Mini Webshop</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
     <style>
         body {
             font-family: 'Arial', sans-serif;
@@ -63,18 +62,18 @@ $address = $stmtAddress->fetch(PDO::FETCH_ASSOC);
             color: #343a40;
         }
 
-        .container {
+        .profile-container {
             background-color: #fff;
             padding: 40px;
             border-radius: 12px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
             width: 100%;
-            max-width: 900px;
+            max-width: 600px;
             text-align: center;
             transition: transform 0.3s;
         }
 
-        .container:hover {
+        .profile-container:hover {
             transform: scale(1.02);
         }
 
@@ -83,49 +82,74 @@ $address = $stmtAddress->fetch(PDO::FETCH_ASSOC);
             text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
         }
 
-        table {
-            margin-top: 20px;
+        label {
+            display: block;
+            text-align: left;
+            font-weight: bold;
+            margin-top: 10px;
         }
 
-        table th, table td {
+        input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ced4da;
+            border-radius: 5px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        input:focus {
+            border-color: #007bff;
+            outline: none;
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        table {
+            width: 100%;
+            margin-top: 20px;
+            border-collapse: collapse;
+        }
+
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+
+        th, td {
             padding: 10px;
             text-align: left;
         }
 
-        .form-label {
+        a {
+            color: #007bff;
+            text-decoration: none;
             font-weight: bold;
         }
 
-        .btn-primary {
-            background-color: #007bff;
-            border-color: #007bff;
-        }
-
-        .btn-primary:hover {
-            background-color: #0056b3;
-            border-color: #0056b3;
-        }
-
-        .btn-secondary {
-            margin-top: 20px;
-        }
-
-        input.form-control {
-            margin-bottom: 15px;
-        }
-
-        .btn {
-            transition: background-color 0.3s, transform 0.2s;
-        }
-
-        .btn:hover {
-            transform: scale(1.05);
+        a:hover {
+            text-decoration: underline;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1 class="my-4">Profilom</h1>
+    <div class="profile-container">
+        <h1>Profilom</h1>
 
         <h2>Felhasználói adatok</h2>
         <p><strong>Felhasználónév:</strong> <?= htmlspecialchars($user['username']) ?></p>
@@ -133,31 +157,26 @@ $address = $stmtAddress->fetch(PDO::FETCH_ASSOC);
 
         <h2>Új cím mentése</h2>
         <form method="POST" action="profile.php">
-            <div class="mb-3">
-                <label for="street" class="form-label">Utca</label>
-                <input type="text" class="form-control" id="street" name="street" required>
-            </div>
-            <div class="mb-3">
-                <label for="house_number" class="form-label">Házszám</label>
-                <input type="text" class="form-control" id="house_number" name="house_number" required>
-            </div>
-            <div class="mb-3">
-                <label for="city" class="form-label">Város</label>
-                <input type="text" class="form-control" id="city" name="city" required>
-            </div>
-            <div class="mb-3">
-                <label for="state" class="form-label">Megye</label>
-                <input type="text" class="form-control" id="state" name="state" required>
-            </div>
-            <div class="mb-3">
-                <label for="zipcode" class="form-label">Irányítószám</label>
-                <input type="text" class="form-control" id="zipcode" name="zipcode" required>
-            </div>
-            <button type="submit" name="save_address" class="btn btn-primary">Cím mentése</button>
+            <label for="street">Utca</label>
+            <input type="text" id="street" name="street" required>
+
+            <label for="house_number">Házszám</label>
+            <input type="text" id="house_number" name="house_number" required>
+
+            <label for="city">Város</label>
+            <input type="text" id="city" name="city" required>
+
+            <label for="state">Megye</label>
+            <input type="text" id="state" name="state" required>
+
+            <label for="zipcode">Irányítószám</label>
+            <input type="text" id="zipcode" name="zipcode" required>
+
+            <button type="submit" name="save_address">Cím mentése</button>
         </form>
 
-        <h2 class="my-4">Rendeléseim</h2>
-        <table class="table table-striped">
+        <h2>Rendeléseim</h2>
+        <table>
             <thead>
                 <tr>
                     <th>ID</th>
@@ -182,9 +201,7 @@ $address = $stmtAddress->fetch(PDO::FETCH_ASSOC);
             </tbody>
         </table>
 
-        <a href="index.php" class="btn btn-secondary">Vissza a főoldalra</a>
+        <a href="index.php">Vissza a főoldalra</a>
     </div>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
