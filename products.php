@@ -10,7 +10,7 @@ $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
 session_start();
 if (!isset($_SESSION['cart'])) {
     $_SESSION['cart'] = [];
-} 
+}
 
 // Kosár hozzáadása
 if (isset($_POST['add_to_cart'])) {
@@ -26,7 +26,6 @@ if (isset($_POST['add_to_cart'])) {
 }
 ?>
 
-
 <!DOCTYPE html>
 <html lang="hu">
 <head>
@@ -34,6 +33,64 @@ if (isset($_POST['add_to_cart'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Összes Termék - Mini Webshop</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: #f8f9fa;
+        }
+
+        .navbar {
+            margin-bottom: 20px;
+        }
+
+        .card {
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .card-img-top {
+            height: 200px;
+            object-fit: cover;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .card-body {
+            padding: 20px;
+        }
+
+        .card-title {
+            font-size: 20px;
+            font-weight: bold;
+            color: #007bff;
+        }
+
+        .card-text {
+            margin-bottom: 15px;
+            color: #495057;
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+            border-color: #007bff;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+            transform: scale(1.05);
+        }
+
+        .container h2 {
+            margin-bottom: 30px;
+            font-size: 28px;
+            text-align: center;
+            color: #343a40;
+        }
+    </style>
 </head>
 <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
@@ -59,7 +116,7 @@ if (isset($_POST['add_to_cart'])) {
     </nav>
 
     <div class="container">
-    <h2 class="my-4">Termékek Listája</h2>
+        <h2 class="my-4">Termékek Listája</h2>
         <div class="row">
             <?php foreach ($products as $product): ?>
                 <div class="col-md-4">
@@ -78,6 +135,7 @@ if (isset($_POST['add_to_cart'])) {
                 </div>
             <?php endforeach; ?>
         </div>
+    </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
 </body>
