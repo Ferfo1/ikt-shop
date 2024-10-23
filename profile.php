@@ -17,6 +17,22 @@ $stmt = $pdo->prepare("SELECT o.id, o.total, o.address, o.payment_method, o.deli
 $stmt->execute([$userId]);
 $orders = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_address'])) {
+    $street = $_POST['street'];
+    $houseNumber = $_POST['house_number'];
+    $city = $_POST['city'];
+    $state = $_POST['state'];
+    $zipcode = $_POST['zipcode'];
+
+    // Cím mentése az adatbázisba
+    $stmt = $pdo->prepare("INSERT INTO addresses (user_id, street, house_number, city, state, zipcode) 
+                           VALUES (?, ?, ?, ?, ?, ?)");
+    $stmt->execute([$userId, $street, $houseNumber, $city, $state, $zipcode]);
+
+    header("Location: profile.php");
+    exit;
+}
+
 // Felhasználói adatok lekérdezése
 $stmtUser = $pdo->prepare("SELECT username, email FROM users WHERE id = ?");
 $stmtUser->execute([$userId]);
@@ -34,6 +50,7 @@ $address = $stmtAddress->fetch(PDO::FETCH_ASSOC);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Profil - Mini Webshop</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
     <style>
         body {
             font-family: 'Arial', sans-serif;
@@ -46,18 +63,18 @@ $address = $stmtAddress->fetch(PDO::FETCH_ASSOC);
             color: #343a40;
         }
 
-        .profile-container {
+        .container {
             background-color: #fff;
             padding: 40px;
             border-radius: 12px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
             width: 100%;
-            max-width: 600px;
+            max-width: 900px;
             text-align: center;
             transition: transform 0.3s;
         }
 
-        .profile-container:hover {
+        .container:hover {
             transform: scale(1.02);
         }
 
@@ -67,41 +84,80 @@ $address = $stmtAddress->fetch(PDO::FETCH_ASSOC);
         }
 
         table {
-            width: 100%;
             margin-top: 20px;
-            border-collapse: collapse;
         }
 
-        table, th, td {
-            border: 1px solid #ddd;
-        }
-
-        th, td {
+        table th, table td {
             padding: 10px;
             text-align: left;
         }
 
-        a {
-            color: #007bff;
-            text-decoration: none;
+        .form-label {
             font-weight: bold;
         }
 
-        a:hover {
-            text-decoration: underline;
+        .btn-primary {
+            background-color: #007bff;
+            border-color: #007bff;
+        }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+            border-color: #0056b3;
+        }
+
+        .btn-secondary {
+            margin-top: 20px;
+        }
+
+        input.form-control {
+            margin-bottom: 15px;
+        }
+
+        .btn {
+            transition: background-color 0.3s, transform 0.2s;
+        }
+
+        .btn:hover {
+            transform: scale(1.05);
         }
     </style>
 </head>
 <body>
-    <div class="profile-container">
-        <h1>Profilom</h1>
+    <div class="container">
+        <h1 class="my-4">Profilom</h1>
 
         <h2>Felhasználói adatok</h2>
         <p><strong>Felhasználónév:</strong> <?= htmlspecialchars($user['username']) ?></p>
         <p><strong>Email:</strong> <?= htmlspecialchars($user['email']) ?></p>
 
-        <h2>Rendeléseim</h2>
-        <table>
+        <h2>Új cím mentése</h2>
+        <form method="POST" action="profile.php">
+            <div class="mb-3">
+                <label for="street" class="form-label">Utca</label>
+                <input type="text" class="form-control" id="street" name="street" required>
+            </div>
+            <div class="mb-3">
+                <label for="house_number" class="form-label">Házszám</label>
+                <input type="text" class="form-control" id="house_number" name="house_number" required>
+            </div>
+            <div class="mb-3">
+                <label for="city" class="form-label">Város</label>
+                <input type="text" class="form-control" id="city" name="city" required>
+            </div>
+            <div class="mb-3">
+                <label for="state" class="form-label">Megye</label>
+                <input type="text" class="form-control" id="state" name="state" required>
+            </div>
+            <div class="mb-3">
+                <label for="zipcode" class="form-label">Irányítószám</label>
+                <input type="text" class="form-control" id="zipcode" name="zipcode" required>
+            </div>
+            <button type="submit" name="save_address" class="btn btn-primary">Cím mentése</button>
+        </form>
+
+        <h2 class="my-4">Rendeléseim</h2>
+        <table class="table table-striped">
             <thead>
                 <tr>
                     <th>ID</th>
@@ -126,7 +182,9 @@ $address = $stmtAddress->fetch(PDO::FETCH_ASSOC);
             </tbody>
         </table>
 
-        <a href="index.php">Vissza a főoldalra</a>
+        <a href="index.php" class="btn btn-secondary">Vissza a főoldalra</a>
     </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

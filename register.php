@@ -1,39 +1,13 @@
 <?php
-require 'db.php';
+// Indítsuk el a munkamenetet
 session_start();
 
-// Ha már be van jelentkezve, irányítsuk át a főoldalra
+// Ha már bejelentkezett, irányítsuk át a főoldalra
 if (isset($_SESSION['user_id'])) {
     header('Location: index.php');
     exit();
 }
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['register'])) {
-    $username = $_POST['username'];
-    $email = $_POST['email'];
-    $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
-
-    $street = $_POST['street'];
-    $houseNumber = $_POST['house_number'];
-    $city = $_POST['city'];
-    $state = $_POST['state'];
-    $zipcode = $_POST['zipcode'];
-
-    // Felhasználó hozzáadása
-    $stmt = $pdo->prepare("INSERT INTO users (username, email, password) VALUES (?, ?, ?)");
-    $stmt->execute([$username, $email, $password]);
-    $userId = $pdo->lastInsertId();
-
-    // Cím hozzáadása
-    $stmt = $pdo->prepare("INSERT INTO addresses (user_id, street, house_number, city, state, zipcode) 
-                           VALUES (?, ?, ?, ?, ?, ?)");
-    $stmt->execute([$userId, $street, $houseNumber, $city, $state, $zipcode]);
-
-    header('Location: login.php');
-    exit();
-}
 ?>
-
 <!DOCTYPE html>
 <html lang="hu">
 <head>
@@ -131,34 +105,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['register'])) {
 <body>
     <div class="register-container">
         <h1>Regisztráció</h1>
-        <form action="register.php" method="POST">
-            <label for="username">Felhasználónév</label>
-            <input type="text" id="username" name="username" required>
+        <form action="auth.php" method="POST">
+            <label for="username">Felhasználónév:</label>
+            <input type="text" name="username" required>
 
-            <label for="email">Email</label>
-            <input type="email" id="email" name="email" required>
+            <label for="email">Email cím:</label>
+            <input type="email" name="email" required>
 
-            <label for="password">Jelszó</label>
-            <input type="password" id="password" name="password" required>
+            <label for="password">Jelszó:</label>
+            <input type="password" name="password" required>
 
-            <label for="street">Utca</label>
-            <input type="text" id="street" name="street" required>
-
-            <label for="house_number">Házszám</label>
-            <input type="text" id="house_number" name="house_number" required>
-
-            <label for="city">Város</label>
-            <input type="text" id="city" name="city" required>
-
-            <label for="state">Megye</label>
-            <input type="text" id="state" name="state" required>
-
-            <label for="zipcode">Irányítószám</label>
-            <input type="text" id="zipcode" name="zipcode" required>
+            <label for="password_confirm">Jelszó megerősítése:</label>
+            <input type="password" name="password_confirm" required>
 
             <button type="submit" name="register">Regisztráció</button>
         </form>
-        <p>Van már fiókod? <a href="login.php">Bejelentkezés</a></p>
+        <p>Már van fiókod? <a href="login.php">Jelentkezz be!</a></p>
     </div>
 </body>
 </html>
